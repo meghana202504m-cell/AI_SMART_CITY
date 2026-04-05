@@ -1,0 +1,11 @@
+[
+  {
+    "_id": "220dfee5-67a7-4795-abbf-a01c293cdf07",
+    "name": "m",
+    "email": "megha20240304@gmail.com",
+    "password": "$2b$12$uIgtXwQi0QmrdFele5bodegZ4qO3rp58bCwRuX/aOTzpt7gqIjwES",
+    "locality": "mysore",
+    "age": 18,
+    "created_at": "2026-04-04T18:53:05.906910Z"
+  }
+]

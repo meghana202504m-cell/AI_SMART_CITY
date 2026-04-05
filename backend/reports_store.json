@@ -1,0 +1,38 @@
+[
+  {
+    "_id": "2add07225e9047a6865c3f89fa263afc",
+    "userId": "b439f939-d942-4257-9845-9a7d10d75d74",
+    "issue_type": "road_defect",
+    "description": "road issue",
+    "reporter": "meghana",
+    "location_name": "My current location",
+    "latitude": 12.3136315,
+    "longitude": 76.613571,
+    "status": "pending",
+    "created_at": "2026-04-04T17:03:28.770019Z"
+  },
+  {
+    "_id": "54e7b5d2def74ca0aa8af46e7e6735f1",
+    "userId": "b439f939-d942-4257-9845-9a7d10d75d74",
+    "issue_type": "road_defect",
+    "description": "there is an road issue",
+    "reporter": "megha",
+    "location_name": "My current location",
+    "latitude": 12.3136315,
+    "longitude": 76.613571,
+    "status": "pending",
+    "created_at": "2026-04-04T14:46:08.053629Z"
+  },
+  {
+    "_id": "63d22623a21640749f4ce3c27696967e",
+    "userId": "b439f939-d942-4257-9845-9a7d10d75d74",
+    "issue_type": "waste",
+    "description": "beside my home there is garbage deposited...and it is causing pollution...please address this",
+    "reporter": "megha",
+    "location_name": "My current location",
+    "latitude": 12.3136315,
+    "longitude": 76.613571,
+    "status": "pending",
+    "created_at": "2026-04-04T14:43:11.826874Z"
+  }
+]

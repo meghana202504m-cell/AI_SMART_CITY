@@ -1,0 +1,74 @@
+[
+  {
+    "_id": "3fcc20e8-5e1d-44ed-b946-59c5b73a05f7",
+    "userId": "15f140ce-ffbd-4e65-8ba2-20e56620a61b",
+    "issue_type": "test",
+    "description": "test report",
+    "reporter": "Anonymous",
+    "location_name": "",
+    "latitude": 12.9716,
+    "longitude": 77.5946,
+    "status": "open",
+    "created_at": "2026-04-04T19:27:44.131881Z"
+  },
+  {
+    "_id": "cfd2be4c-ae39-4706-b567-aca1703cd6fc",
+    "userId": "220dfee5-67a7-4795-abbf-a01c293cdf07",
+    "issue_type": "road_defect",
+    "description": "road issue",
+    "reporter": "m",
+    "location_name": "My current location",
+    "latitude": 12.31673584281843,
+    "longitude": 76.6140195392954,
+    "status": "open",
+    "created_at": "2026-04-04T20:41:22.048364Z"
+  },
+  {
+    "_id": "97eb5e25-6d72-4efd-970e-02412c46704a",
+    "userId": "220dfee5-67a7-4795-abbf-a01c293cdf07",
+    "issue_type": "waste",
+    "description": "waste",
+    "reporter": "m",
+    "location_name": "My current location",
+    "latitude": 12.3168235,
+    "longitude": 76.6140175,
+    "status": "open",
+    "created_at": "2026-04-04T20:42:42.274749Z"
+  },
+  {
+    "_id": "38148493-d117-474a-ad8c-574a7ab9a1ab",
+    "userId": "220dfee5-67a7-4795-abbf-a01c293cdf07",
+    "issue_type": "waste",
+    "description": "there is garbage nearby my house",
+    "reporter": "megha",
+    "location_name": "My current location",
+    "latitude": 12.316717507238787,
+    "longitude": 76.61398746682565,
+    "status": "open",
+    "created_at": "2026-04-04T21:01:03.106899Z"
+  },
+  {
+    "_id": "ebccd461-c246-4d8e-9831-6b41fcf630b1",
+    "userId": "220dfee5-67a7-4795-abbf-a01c293cdf07",
+    "issue_type": "waste",
+    "description": "garbage in my locality",
+    "reporter": "megha",
+    "location_name": "My current location",
+    "latitude": 12.316662623888176,
+    "longitude": 76.61396310653944,
+    "status": "open",
+    "created_at": "2026-04-04T21:11:16.670595Z"
+  },
+  {
+    "_id": "6df48f93-5ed4-4f3b-afc2-9271ab940c8d",
+    "userId": "220dfee5-67a7-4795-abbf-a01c293cdf07",
+    "issue_type": "waste",
+    "description": "there is garbage deposited in opposite road",
+    "reporter": "megha",
+    "location_name": "My current location",
+    "latitude": 12.3136315,
+    "longitude": 76.613571,
+    "status": "open",
+    "created_at": "2026-04-04T23:05:27.078029Z"
+  }
+]
