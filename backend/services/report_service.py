@@ -41,9 +41,13 @@ def report_issue():
 
     report = build_report(data)
 
+    # Assign nearest municipal office
+    from services.office_assignment_service import assign_office_to_report
+    report_dict = assign_office_to_report(report.to_dict())
+
     db = current_app.config["DB"]
 
     # ✅ SAVE TO DATABASE
-    db.reports.insert_one(report.__dict__)
+    db.reports.insert_one(report_dict)
 
-    return jsonify({"message": "Report stored successfully"})
+    return jsonify({"message": "Report stored successfully", "report": report_dict})

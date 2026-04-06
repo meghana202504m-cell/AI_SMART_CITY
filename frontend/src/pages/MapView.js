@@ -344,6 +344,14 @@ function MapView() {
                     <p className="font-semibold">{report.issue_type || 'Report'}</p>
                     <p className="text-slate-600 truncate">{report.description}</p>
                     <p className="text-slate-500">Status: {report.status || 'Open'}</p>
+                    {report.assigned_office && (
+                      <div className="mt-2 rounded bg-blue-50 border border-blue-200 p-2">
+                        <p className="text-blue-700 font-medium text-xs">🏛️ {report.assigned_office}</p>
+                        {report.distance_to_office_km && (
+                          <p className="text-blue-600 text-xs">{report.distance_to_office_km} km away</p>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ))
               )}

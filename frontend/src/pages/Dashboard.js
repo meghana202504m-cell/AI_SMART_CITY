@@ -230,7 +230,7 @@ function Dashboard() {
       <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-lg shadow-lg p-8 text-white">
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-4xl font-bold mb-2">Smart City AI Dashboard</h1>
+            <h1 className="text-4xl font-bold mb-2">Synora AI Dashboard</h1>
             <p className="text-lg opacity-90">Search locations, get live traffic forecasts, and review your reports.</p>
           </div>
           <div className="text-6xl opacity-20">🏙️</div>
@@ -411,6 +411,41 @@ function Dashboard() {
                     {report.location_name && <span>📍 {report.location_name}</span>}
                     {report.created_at && <span>🕒 {new Date(report.created_at).toLocaleString()}</span>}
                   </div>
+                  
+                  {/* Municipal Assignment Details */}
+                  {(report.assigned_office || report.office_id || report.distance_to_office_km || report.office_assignment_reason) && (
+                    <div className="mt-4 rounded-lg bg-blue-50 border border-blue-200 p-3">
+                      <h4 className="text-sm font-semibold text-blue-800 mb-2 flex items-center gap-2">
+                        🏛️ Municipal Assignment Details
+                      </h4>
+                      <div className="space-y-1 text-xs text-blue-700">
+                        {report.assigned_office && (
+                          <div className="flex justify-between">
+                            <span className="font-medium">Assigned Office:</span>
+                            <span>{report.assigned_office}</span>
+                          </div>
+                        )}
+                        {report.distance_to_office_km && (
+                          <div className="flex justify-between">
+                            <span className="font-medium">Distance:</span>
+                            <span>{report.distance_to_office_km} km</span>
+                          </div>
+                        )}
+                        {report.office_assignment_reason && (
+                          <div className="flex justify-between">
+                            <span className="font-medium">Reason:</span>
+                            <span className="capitalize">{report.office_assignment_reason.replace(/_/g, ' ')}</span>
+                          </div>
+                        )}
+                        {report.office_id && (
+                          <div className="flex justify-between">
+                            <span className="font-medium">Office ID:</span>
+                            <span className="font-mono text-xs">{report.office_id}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

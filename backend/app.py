@@ -18,6 +18,7 @@ from email.mime.multipart import MIMEMultipart
 import cv2
 import numpy as np
 import requests
+import math
 import bcrypt
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -39,11 +40,13 @@ try:
     from backend.routes.emergency import emergency_bp
     from backend.routes.directions import directions_bp
     from backend.routes.reports import reports_bp
+    from backend.services.office_assignment_service import assign_office_to_report
 except ImportError:
     from routes.predict import predict_bp
     from routes.emergency import emergency_bp
     from routes.directions import directions_bp
     from routes.reports import reports_bp
+    from services.office_assignment_service import assign_office_to_report
 
 # ==================== INITIALIZATION ====================
 load_dotenv()
@@ -104,6 +107,116 @@ UPLOADS_DIR = os.path.join(DATA_DIR, "uploads")
 
 os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(UPLOADS_DIR, exist_ok=True)
+
+# Mock municipal office locations and contact info used only for response enrichment
+MUNICIPAL_OFFICES = [
+    {
+        "name": "North District Office",
+        "lat": 40.7580,
+        "lon": -73.9855,
+        "contact": {
+            "phone": "+1-212-555-0101",
+            "email": "north@municipaloffice.gov",
+            "address": "123 North Avenue, New York, NY"
+        }
+    },
+    {
+        "name": "Central Municipal Control Room",
+        "lat": 40.7128,
+        "lon": -74.0060,
+        "contact": {
+            "phone": "+1-212-555-0102",
+            "email": "central@municipaloffice.gov",
+            "address": "456 Central Plaza, New York, NY"
+        }
+    },
+    {
+        "name": "South District Office",
+        "lat": 40.6892,
+        "lon": -74.0445,
+        "contact": {
+            "phone": "+1-212-555-0103",
+            "email": "south@municipaloffice.gov",
+            "address": "789 South Boulevard, New York, NY"
+        }
+    }
+]
+
+DEFAULT_OFFICE = {
+    "name": "Central Municipal Control Room",
+    "contact": {
+        "phone": "+1-212-555-0102",
+        "email": "central@municipaloffice.gov",
+        "address": "456 Central Plaza, New York, NY"
+    }
+}
+
+
+def haversine_distance(lat1, lon1, lat2, lon2):
+    """Calculate great-circle distance between two points in kilometers."""
+    try:
+        lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
+        dlat = lat2 - lat1
+        dlon = lon2 - lon1
+        a = math.sin(dlat / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2) ** 2
+        return 6371 * (2 * math.asin(math.sqrt(a)))
+    except Exception as e:
+        app.logger.error("Error calculating Haversine distance: %s", e)
+        return float("inf")
+
+
+def assign_nearest_office(lat, lon):
+    """
+    Find the nearest municipal office for the provided location.
+    Returns office name and dummy contact info.
+    """
+    if lat is None or lon is None:
+        app.logger.debug("No location provided, assigning default office")
+        return DEFAULT_OFFICE["name"], DEFAULT_OFFICE["contact"]
+
+    try:
+        lat = float(lat)
+        lon = float(lon)
+    except (ValueError, TypeError):
+        app.logger.debug("Invalid coordinates provided, assigning default office")
+        return DEFAULT_OFFICE["name"], DEFAULT_OFFICE["contact"]
+
+    nearest = None
+    best_distance = float("inf")
+    for office in MUNICIPAL_OFFICES:
+        distance = haversine_distance(lat, lon, office["lat"], office["lon"])
+        if distance < best_distance:
+            best_distance = distance
+            nearest = office
+
+    if nearest is None:
+        app.logger.debug("No nearest office found, assigning default office")
+        return DEFAULT_OFFICE["name"], DEFAULT_OFFICE["contact"]
+
+    app.logger.debug("Assigned nearest office %s to location (%s, %s)", nearest["name"], lat, lon)
+    return nearest["name"], nearest["contact"]
+
+
+def enrich_report_for_response(report):
+    """Return a copy of the report enriched with office routing metadata."""
+    enriched = report.copy()
+    latitude = enriched.get("latitude")
+    longitude = enriched.get("longitude")
+    office_name, office_contact = assign_nearest_office(latitude, longitude)
+
+    enriched["assigned_office"] = office_name
+    enriched["office_contact"] = office_contact
+    enriched["routing_status"] = "assigned" if office_name else "unknown"
+
+    if not enriched.get("latitude") or not enriched.get("longitude"):
+        enriched["routing_status"] = "default_assigned"
+
+    app.logger.debug(
+        "Report %s enriched with office %s",
+        enriched.get("_id", "unknown"),
+        office_name,
+    )
+    return enriched
 
 # Initialize reports storage
 if not os.path.exists(REPORTS_FILE):
@@ -896,6 +1009,9 @@ def submit_report():
             "created_at": make_timestamp(),
         }
 
+        # Assign nearest municipal office to the report
+        report = assign_office_to_report(report)
+
         # Store report
         if HAS_MONGODB and 'DB' in app.config:
             try:
@@ -915,7 +1031,7 @@ def submit_report():
         return jsonify({
             "success": True,
             "message": "Report submitted successfully",
-            "report_id": report["_id"]
+            "report": report
         }), 201
 
     except Exception as e:
@@ -965,10 +1081,12 @@ def get_reports():
             reports.sort(key=lambda x: x.get("created_at", ""), reverse=True)
             reports = reports[:100]
 
-        print("Fetched reports:", reports)
-        app.logger.info("Fetched %d reports", len(reports))
+        enriched_reports = [enrich_report_for_response(report) for report in reports]
 
-        return jsonify({"success": True, "reports": reports, "data": reports}), 200
+        print("Fetched reports:", enriched_reports)
+        app.logger.info("Fetched %d reports", len(enriched_reports))
+
+        return jsonify({"success": True, "reports": enriched_reports, "data": enriched_reports}), 200
 
     except Exception as e:
         app.logger.error("Error fetching reports: %s", e)
